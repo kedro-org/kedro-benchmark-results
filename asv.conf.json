@@ -1,0 +1,17 @@
+{
+    "version": 1,
+
+    "project": "Kedro",
+
+    "repo": "https://github.com/kedro-org/kedro.git",
+
+    "project_url": "http://kedro.org/",
+
+    "show_commit_url": "http://github.com/kedro-org/kedro/commit/",
+
+    "branches": ["main"],
+    
+    "results_dir": ".asv/results",
+
+    "html_dir": ".asv/html"
+}
