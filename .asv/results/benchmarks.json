@@ -1,0 +1,18 @@
+{
+    "benchmark_dummy.TimeSuite.time_keys": {
+        "code": "class TimeSuite:\n    def time_keys(self):\n        for key in self.d.keys():\n            pass\n\n    def setup(self):\n        self.d = {}\n        for x in range(500):\n            self.d[x] = None",
+        "min_run_count": 2,
+        "name": "benchmark_dummy.TimeSuite.time_keys",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "86e015a3c40c52da31e4185fff7c7176c38c5e1e1e4aba71912db0b388225191",
+        "warmup_time": -1
+    },
+    "version": 2
+}
