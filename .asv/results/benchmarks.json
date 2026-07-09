@@ -544,5 +544,167 @@
         "version": "1291001401067bbf432000949d1136ebf7f75313b829a0ae0ff789ab340cc623",
         "warmup_time": -1
     },
+    "benchmark_validation.ContextParamsTimeSuite.time_context_params_cached": {
+        "code": "class ContextParamsTimeSuite:\n    def time_context_params_cached(self, node_count, typed_params_per_node):\n        self.cached_context.params\n\n    def setup(self, node_count, typed_params_per_node):\n        import kedro.framework.project as project_module\n    \n        self.project_module = project_module\n        self.original_pipelines = project_module.pipelines\n        self.pipelines = _make_pipeline_dict(node_count, typed_params_per_node)\n        project_module.pipelines = self.pipelines\n    \n        self.context = KedroContext(\n            project_path=Path.cwd(),\n            config_loader=_BenchmarkConfigLoader(\n                _make_raw_params(node_count, typed_params_per_node)\n            ),\n            env=\"base\",\n            package_name=\"benchmark_project\",\n            hook_manager=None,\n        )\n        self.cached_context = KedroContext(\n            project_path=Path.cwd(),\n            config_loader=_BenchmarkConfigLoader(\n                _make_raw_params(node_count, typed_params_per_node)\n            ),\n            env=\"base\",\n            package_name=\"benchmark_project\",\n            hook_manager=None,\n        )\n        self.cached_context.params",
+        "min_run_count": 2,
+        "name": "benchmark_validation.ContextParamsTimeSuite.time_context_params_cached",
+        "number": 0,
+        "param_names": [
+            "node_count",
+            "typed_params_per_node"
+        ],
+        "params": [
+            [
+                "10",
+                "100",
+                "500"
+            ],
+            [
+                "1",
+                "5"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "886aaa85115a69a2ac6e80fb60630577efbd452e55fa8850a6fc2063cc32fed8",
+        "warmup_time": -1
+    },
+    "benchmark_validation.ContextParamsTimeSuite.time_context_params_uncached": {
+        "code": "class ContextParamsTimeSuite:\n    def time_context_params_uncached(self, node_count, typed_params_per_node):\n        self.context._validated_params_cache = None\n        self.context._cached_validation_scope = None\n        self.context.params\n\n    def setup(self, node_count, typed_params_per_node):\n        import kedro.framework.project as project_module\n    \n        self.project_module = project_module\n        self.original_pipelines = project_module.pipelines\n        self.pipelines = _make_pipeline_dict(node_count, typed_params_per_node)\n        project_module.pipelines = self.pipelines\n    \n        self.context = KedroContext(\n            project_path=Path.cwd(),\n            config_loader=_BenchmarkConfigLoader(\n                _make_raw_params(node_count, typed_params_per_node)\n            ),\n            env=\"base\",\n            package_name=\"benchmark_project\",\n            hook_manager=None,\n        )\n        self.cached_context = KedroContext(\n            project_path=Path.cwd(),\n            config_loader=_BenchmarkConfigLoader(\n                _make_raw_params(node_count, typed_params_per_node)\n            ),\n            env=\"base\",\n            package_name=\"benchmark_project\",\n            hook_manager=None,\n        )\n        self.cached_context.params",
+        "min_run_count": 2,
+        "name": "benchmark_validation.ContextParamsTimeSuite.time_context_params_uncached",
+        "number": 0,
+        "param_names": [
+            "node_count",
+            "typed_params_per_node"
+        ],
+        "params": [
+            [
+                "10",
+                "100",
+                "500"
+            ],
+            [
+                "1",
+                "5"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "57eee0c5b6a8f956eaf24506f0731451937dcf3e84e2e1f9f838c692bc90fd94",
+        "warmup_time": -1
+    },
+    "benchmark_validation.InstantiateModelTimeSuite.time_instantiate_model": {
+        "code": "class InstantiateModelTimeSuite:\n    def time_instantiate_model(self, model_kind):\n        instantiate_model(\"model_options\", self.raw_value, self.model_type)\n\n    def setup(self, model_kind):\n        self.raw_value = _make_raw_value(1)\n        self.model_type = (\n            BenchmarkPydanticModel\n            if model_kind == \"pydantic\"\n            else BenchmarkDataclassModel\n        )",
+        "min_run_count": 2,
+        "name": "benchmark_validation.InstantiateModelTimeSuite.time_instantiate_model",
+        "number": 0,
+        "param_names": [
+            "model_kind"
+        ],
+        "params": [
+            [
+                "'pydantic'",
+                "'dataclass'"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "79cd398b31d42b7fa15a82fd18d3c095e13006773f44207f4dc5a7735c18ff2c",
+        "warmup_time": -1
+    },
+    "benchmark_validation.ParameterValidatorTimeSuite.time_validate_raw_params": {
+        "code": "class ParameterValidatorTimeSuite:\n    def time_validate_raw_params(self, node_count, typed_params_per_node):\n        self.validator.validate_raw_params(self.raw_params)\n\n    def setup(self, node_count, typed_params_per_node):\n        self.pipelines = _make_pipeline_dict(node_count, typed_params_per_node)\n        self.raw_params = _make_raw_params(node_count, typed_params_per_node)\n        self.validator = ParameterValidator(self.pipelines)",
+        "min_run_count": 2,
+        "name": "benchmark_validation.ParameterValidatorTimeSuite.time_validate_raw_params",
+        "number": 0,
+        "param_names": [
+            "node_count",
+            "typed_params_per_node"
+        ],
+        "params": [
+            [
+                "10",
+                "100",
+                "500"
+            ],
+            [
+                "1",
+                "5"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "852d4276f971ee1e791e8285cc5d16e925396f63f3e3d9e2b9797e0ade188eb5",
+        "warmup_time": -1
+    },
+    "benchmark_validation.ScopedContextParamsTimeSuite.time_context_params_scoped_validation": {
+        "code": "class ScopedContextParamsTimeSuite:\n    def time_context_params_scoped_validation(self, node_count, typed_params_per_node):\n        self.context._validated_params_cache = None\n        self.context._cached_validation_scope = None\n        self.context.params\n\n    def setup(self, node_count, typed_params_per_node):\n        import kedro.framework.project as project_module\n    \n        self.project_module = project_module\n        self.original_pipelines = project_module.pipelines\n        self.pipelines = _make_scoped_pipeline_dict(node_count, typed_params_per_node)\n        project_module.pipelines = self.pipelines\n    \n        self.context = KedroContext(\n            project_path=Path.cwd(),\n            config_loader=_BenchmarkConfigLoader(\n                _make_scoped_raw_params(node_count, typed_params_per_node)\n            ),\n            env=\"base\",\n            package_name=\"benchmark_project\",\n            hook_manager=None,\n        )\n        self.context._pipelines_to_validate = [\"data_science\"]",
+        "min_run_count": 2,
+        "name": "benchmark_validation.ScopedContextParamsTimeSuite.time_context_params_scoped_validation",
+        "number": 0,
+        "param_names": [
+            "node_count",
+            "typed_params_per_node"
+        ],
+        "params": [
+            [
+                "10",
+                "100",
+                "500"
+            ],
+            [
+                "1",
+                "5"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "bd50bb77c0f8fff029dbace1cb9d95adfab241f3d258a315d1d0c33f30802614",
+        "warmup_time": -1
+    },
+    "benchmark_validation.TypeExtractorTimeSuite.time_extract_types_from_pipelines": {
+        "code": "class TypeExtractorTimeSuite:\n    def time_extract_types_from_pipelines(self, node_count, typed_params_per_node):\n        TypeExtractor(self.pipelines).extract_types_from_pipelines()\n\n    def setup(self, node_count, typed_params_per_node):\n        self.pipelines = _make_pipeline_dict(node_count, typed_params_per_node)",
+        "min_run_count": 2,
+        "name": "benchmark_validation.TypeExtractorTimeSuite.time_extract_types_from_pipelines",
+        "number": 0,
+        "param_names": [
+            "node_count",
+            "typed_params_per_node"
+        ],
+        "params": [
+            [
+                "10",
+                "100",
+                "500"
+            ],
+            [
+                "1",
+                "5"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "2cf6f61ffc227ab00029347ccfda681ed4264b94b583e7ffd0b1fa343f545a5b",
+        "warmup_time": -1
+    },
     "version": 2
 }
