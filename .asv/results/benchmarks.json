@@ -600,6 +600,110 @@
         "version": "57eee0c5b6a8f956eaf24506f0731451937dcf3e84e2e1f9f838c692bc90fd94",
         "warmup_time": -1
     },
+    "benchmark_validation.DatasetValidationCatalogBuildTimeSuite.time_build_with_validator_specs": {
+        "code": "class DatasetValidationCatalogBuildTimeSuite:\n    def time_build_with_validator_specs(self, entry_count):\n        DataCatalog.from_config(self.validated_config)\n\n    def setup(self, entry_count):\n        self.plain_config = {\n            f\"dataset_{i}\": {\"type\": \"kedro.io.MemoryDataset\"}\n            for i in range(entry_count)\n        }\n        self.validated_config = {\n            f\"dataset_{i}\": {\n                \"type\": \"kedro.io.MemoryDataset\",\n                \"validator\": (\n                    \"kedro_benchmarks.benchmark_validation._passthrough_validator\"\n                ),\n            }\n            for i in range(entry_count)\n        }",
+        "min_run_count": 2,
+        "name": "benchmark_validation.DatasetValidationCatalogBuildTimeSuite.time_build_with_validator_specs",
+        "number": 0,
+        "param_names": [
+            "entry_count"
+        ],
+        "params": [
+            [
+                "100",
+                "500"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "70b45dc01ef60340943f7b3e0c6cecf58096b03698a3238c20a4bd2d2d6ad122",
+        "warmup_time": -1
+    },
+    "benchmark_validation.DatasetValidationCatalogBuildTimeSuite.time_build_without_validators": {
+        "code": "class DatasetValidationCatalogBuildTimeSuite:\n    def time_build_without_validators(self, entry_count):\n        DataCatalog.from_config(self.plain_config)\n\n    def setup(self, entry_count):\n        self.plain_config = {\n            f\"dataset_{i}\": {\"type\": \"kedro.io.MemoryDataset\"}\n            for i in range(entry_count)\n        }\n        self.validated_config = {\n            f\"dataset_{i}\": {\n                \"type\": \"kedro.io.MemoryDataset\",\n                \"validator\": (\n                    \"kedro_benchmarks.benchmark_validation._passthrough_validator\"\n                ),\n            }\n            for i in range(entry_count)\n        }",
+        "min_run_count": 2,
+        "name": "benchmark_validation.DatasetValidationCatalogBuildTimeSuite.time_build_without_validators",
+        "number": 0,
+        "param_names": [
+            "entry_count"
+        ],
+        "params": [
+            [
+                "100",
+                "500"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "a0d24a2a8ef26f9d0720a35a42c4473f91710365f4cca97c98dce35e73b3f3d0",
+        "warmup_time": -1
+    },
+    "benchmark_validation.DatasetValidationFunnelTimeSuite.time_first_load_resolves_validator": {
+        "code": "class DatasetValidationFunnelTimeSuite:\n    def time_first_load_resolves_validator(self):\n        \"\"\"Cold path: the validator is imported and built on first use.\"\"\"\n        for _ in range(100):\n            self.validated_catalog._validators.clear()\n            self.validated_catalog.load(\"validated\")\n\n    def setup(self):\n        from kedro.io import MemoryDataset\n    \n        self.plain_catalog = DataCatalog(\n            {f\"dataset_{i}\": MemoryDataset(data=i) for i in range(500)}\n        )\n        self.validated_catalog = DataCatalog.from_config(\n            {\n                \"validated\": {\n                    \"type\": \"kedro.io.MemoryDataset\",\n                    \"validator\": (\n                        \"kedro_benchmarks.benchmark_validation._passthrough_validator\"\n                    ),\n                }\n            }\n        )\n        self.validated_catalog.save(\"validated\", 42)\n        self.validated_catalog.load(\"validated\")  # resolve + cache the validator",
+        "min_run_count": 2,
+        "name": "benchmark_validation.DatasetValidationFunnelTimeSuite.time_first_load_resolves_validator",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "38bb9436e10129fff1da10628e35f0ae1f5ab4b2b2f835bb1a1f6040472e1dc5",
+        "warmup_time": -1
+    },
+    "benchmark_validation.DatasetValidationFunnelTimeSuite.time_load_no_validator_declared": {
+        "code": "class DatasetValidationFunnelTimeSuite:\n    def time_load_no_validator_declared(self):\n        \"\"\"The no-op path: guard ladder exits on a dictionary miss.\"\"\"\n        for i in range(500):\n            self.plain_catalog.load(f\"dataset_{i}\")\n\n    def setup(self):\n        from kedro.io import MemoryDataset\n    \n        self.plain_catalog = DataCatalog(\n            {f\"dataset_{i}\": MemoryDataset(data=i) for i in range(500)}\n        )\n        self.validated_catalog = DataCatalog.from_config(\n            {\n                \"validated\": {\n                    \"type\": \"kedro.io.MemoryDataset\",\n                    \"validator\": (\n                        \"kedro_benchmarks.benchmark_validation._passthrough_validator\"\n                    ),\n                }\n            }\n        )\n        self.validated_catalog.save(\"validated\", 42)\n        self.validated_catalog.load(\"validated\")  # resolve + cache the validator",
+        "min_run_count": 2,
+        "name": "benchmark_validation.DatasetValidationFunnelTimeSuite.time_load_no_validator_declared",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "68996a3fe3255e715059f975ff7a26a2128593d345f3f4b1eb15aa33b252c13e",
+        "warmup_time": -1
+    },
+    "benchmark_validation.DatasetValidationFunnelTimeSuite.time_load_with_cached_validator": {
+        "code": "class DatasetValidationFunnelTimeSuite:\n    def time_load_with_cached_validator(self):\n        for _ in range(500):\n            self.validated_catalog.load(\"validated\")\n\n    def setup(self):\n        from kedro.io import MemoryDataset\n    \n        self.plain_catalog = DataCatalog(\n            {f\"dataset_{i}\": MemoryDataset(data=i) for i in range(500)}\n        )\n        self.validated_catalog = DataCatalog.from_config(\n            {\n                \"validated\": {\n                    \"type\": \"kedro.io.MemoryDataset\",\n                    \"validator\": (\n                        \"kedro_benchmarks.benchmark_validation._passthrough_validator\"\n                    ),\n                }\n            }\n        )\n        self.validated_catalog.save(\"validated\", 42)\n        self.validated_catalog.load(\"validated\")  # resolve + cache the validator",
+        "min_run_count": 2,
+        "name": "benchmark_validation.DatasetValidationFunnelTimeSuite.time_load_with_cached_validator",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "bc30dc667695d9cee2d770e5f817066e206517379027c205d47473444a3473f6",
+        "warmup_time": -1
+    },
+    "benchmark_validation.DatasetValidationFunnelTimeSuite.time_save_with_cached_validator": {
+        "code": "class DatasetValidationFunnelTimeSuite:\n    def time_save_with_cached_validator(self):\n        for _ in range(500):\n            self.validated_catalog.save(\"validated\", 42)\n\n    def setup(self):\n        from kedro.io import MemoryDataset\n    \n        self.plain_catalog = DataCatalog(\n            {f\"dataset_{i}\": MemoryDataset(data=i) for i in range(500)}\n        )\n        self.validated_catalog = DataCatalog.from_config(\n            {\n                \"validated\": {\n                    \"type\": \"kedro.io.MemoryDataset\",\n                    \"validator\": (\n                        \"kedro_benchmarks.benchmark_validation._passthrough_validator\"\n                    ),\n                }\n            }\n        )\n        self.validated_catalog.save(\"validated\", 42)\n        self.validated_catalog.load(\"validated\")  # resolve + cache the validator",
+        "min_run_count": 2,
+        "name": "benchmark_validation.DatasetValidationFunnelTimeSuite.time_save_with_cached_validator",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "7fc1cbe4e9da9f4443583fd09003d39b5500d274e29d0502b2c752117e7debb5",
+        "warmup_time": -1
+    },
     "benchmark_validation.InstantiateModelTimeSuite.time_instantiate_model": {
         "code": "class InstantiateModelTimeSuite:\n    def time_instantiate_model(self, model_kind):\n        instantiate_model(\"model_options\", self.raw_value, self.model_type)\n\n    def setup(self, model_kind):\n        self.raw_value = _make_raw_value(1)\n        self.model_type = (\n            BenchmarkPydanticModel\n            if model_kind == \"pydantic\"\n            else BenchmarkDataclassModel\n        )",
         "min_run_count": 2,
